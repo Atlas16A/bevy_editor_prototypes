@@ -39,4 +39,4 @@ unused_qualifications = "warn"
 workspace = true
 
 [workspace.dependencies]
-bevy = { git = "https://github.com/bevyengine/bevy.git", rev = "9386bd0114c44c9f00a2e9c41db1225aaa78d159" }
+bevy = { git = "https://github.com/bevyengine/bevy.git", rev = "39d96ef0fd1afd0b63edda979903a32815383038" }
