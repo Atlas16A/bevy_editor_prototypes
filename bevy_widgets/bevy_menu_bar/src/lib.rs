@@ -6,6 +6,7 @@
 use bevy::prelude::*;
 
 use bevy_editor_palette::Theme;
+use bevy_text_button::WidgetTextButton;
 
 /// The root node for the menu bar.
 #[derive(Component)]
@@ -47,21 +48,24 @@ fn menu_setup(mut commands: Commands, root: Query<Entity, With<MenuBarNode>>, th
             background_color: BackgroundColor(theme.background_color),
             ..Default::default()
         })
-        .with_children(|parent| {
-            parent.spawn(NodeBundle {
-                style: Style {
-                    width: Val::Px(30.0),
-                    height: Val::Px(20.0),
+        .insert(WidgetTextButton("Hello".to_string()))
+        .insert(WidgetTextButton("Hello".to_string()))
+        .insert(WidgetTextButton("Hello".to_string()));
+    /* .with_children(|parent| {
+        parent.spawn(NodeBundle {
+            style: Style {
+                width: Val::Px(30.0),
+                height: Val::Px(20.0),
 
-                    ..Default::default()
-                },
-                background_color: BackgroundColor(Color::Oklaba(Oklaba {
-                    lightness: 0.090,
-                    a: 0.0,
-                    b: 0.0,
-                    alpha: 1.0,
-                })),
                 ..Default::default()
-            });
+            },
+            background_color: BackgroundColor(Color::Oklaba(Oklaba {
+                lightness: 0.090,
+                a: 0.0,
+                b: 0.0,
+                alpha: 1.0,
+            })),
+            ..Default::default()
         });
+    }); */
 }

@@ -1,12 +1,11 @@
 [package]
-name = "bevy_menu_bar"
+name = "bevy_text_button"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 bevy.workspace = true
 bevy_editor_palette = { path = "../../crates/bevy_editor_palette" }
-bevy_text_button = { path = "../bevy_text_button" }
 
 [lints]
 workspace = true
