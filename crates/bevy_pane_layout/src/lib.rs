@@ -13,6 +13,7 @@
 ///   - If a pane can not be sensibly resized, it can overflow under the other panes.
 /// - Panes must not interfere with each other, only temporary/absolute positioned elements are allowed to overlap panes.
 use bevy::prelude::*;
+use bevy_editor_palette::Theme;
 
 /// The Bevy Pane Layout Plugin.
 pub struct PaneLayoutPlugin;
@@ -27,7 +28,11 @@ impl Plugin for PaneLayoutPlugin {
 pub struct PaneLayoutSet;
 
 /// The setup system for the Pane Layout.
-fn pane_layout_setup(mut commands: Commands, root: Query<Entity, With<RootPaneLayoutNode>>) {
+fn pane_layout_setup(
+    mut commands: Commands,
+    root: Query<Entity, With<RootPaneLayoutNode>>,
+    theme: Res<Theme>,
+) {
     // All Panes exist as children of this Node.
     commands.entity(root.single()).insert(NodeBundle {
         style: Style {
@@ -38,7 +43,8 @@ fn pane_layout_setup(mut commands: Commands, root: Query<Entity, With<RootPaneLa
             grid_template_rows: vec![GridTrack::percent(100.0)],
             ..Default::default()
         },
-
+        background_color: BackgroundColor(theme.pane_background_color),
+        border_radius: theme.pane_border_radius,
         ..Default::default()
     });
 }

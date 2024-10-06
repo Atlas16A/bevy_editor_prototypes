@@ -18,14 +18,21 @@ pub struct Theme {
     pub background_color: Color,
     pub pane_background_color: Color,
     pub text_color: Color,
+    pub pane_border_radius: BorderRadius,
 }
 
 impl Default for Theme {
     fn default() -> Self {
         Self {
             background_color: Color::oklch(0.209, 0.0, 0.0),
-            pane_background_color: Color::oklch(0.45, 0.0, 0.0),
+            pane_background_color: Color::oklch(0.3677, 0.0, 0.0),
             text_color: Color::oklch(0.9219, 0.0, 0.0),
+            pane_border_radius: BorderRadius {
+                top_left: Val::Px(8.0),
+                top_right: Val::Px(8.0),
+                bottom_left: Val::Px(8.0),
+                bottom_right: Val::Px(8.0),
+            },
         }
     }
 }
