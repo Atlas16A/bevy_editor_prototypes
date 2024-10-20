@@ -148,8 +148,10 @@ fn setup(
         Node {
             padding: UiRect::all(Val::Px(1.)),
             flex_grow: 1.,
+            flex_shrink: 1.,
+            flex_basis: Val::Percent(0.),
             width: Val::Percent(100.),
-
+            //max_height: Val::Percent(92.),
             ..default()
         },
         theme.background_color,
