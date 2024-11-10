@@ -45,6 +45,7 @@ bevy_marketplace_viewer = { path = "bevy_editor_panes/bevy_marketplace_viewer" }
 bevy_preferences = { path = "bevy_editor_panes/bevy_preferences" }
 bevy_properties_pane = { path = "bevy_editor_panes/bevy_properties_pane" }
 bevy_scene_tree = { path = "bevy_editor_panes/bevy_scene_tree" }
+bevy_node_graph = { path = "bevy_editor_panes/bevy_node_graph" }
 
 # bevy_widgets
 bevy_color_picker = { path = "bevy_widgets/bevy_color_picker" }
