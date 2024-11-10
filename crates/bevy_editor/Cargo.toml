@@ -19,6 +19,7 @@ rfd.workspace = true
 bevy_3d_viewport.workspace = true
 bevy_2d_viewport.workspace = true
 bevy_asset_browser.workspace = true
+bevy_node_graph.workspace = true
 
 [lints]
 workspace = true
