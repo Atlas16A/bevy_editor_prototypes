@@ -1,8 +1,12 @@
 //! 2d Viewport for Bevy
 use bevy::{
+    picking::{
+        pointer::{Location, PointerId, PointerInput, PointerLocation},
+        PickSet,
+    },
     prelude::*,
     render::{
-        camera::RenderTarget,
+        camera::{NormalizedRenderTarget, RenderTarget},
         render_resource::{Extent3d, TextureFormat, TextureUsages},
         view::RenderLayers,
     },
@@ -39,6 +43,10 @@ impl Plugin for Viewport2dPanePlugin {
         app.add_plugins(EditorCamera2dPlugin)
             .add_systems(Startup, setup)
             .add_systems(
+                PreUpdate,
+                render_target_picking_passthrough.in_set(PickSet::Last),
+            )
+            .add_systems(
                 PostUpdate,
                 update_render_target_size.after(ui_layout_system),
             )
@@ -59,6 +67,63 @@ impl Plugin for Viewport2dPanePlugin {
             .register("Viewport 2D", |mut commands, pane_root| {
                 commands.entity(pane_root).insert(Bevy2dViewport::default());
             });
+    }
+}
+
+#[derive(Component)]
+struct Active;
+
+// TODO This does not properly handle multiple windows.
+/// Copies picking events and moves pointers through render-targets.
+fn render_target_picking_passthrough(
+    mut commands: Commands,
+    viewports: Query<(Entity, &Bevy2dViewport)>,
+    content: Query<&PaneContentNode>,
+    children_query: Query<&Children>,
+    node_query: Query<(&ComputedNode, &GlobalTransform, &UiImage), With<Active>>,
+    mut pointers: Query<(&PointerId, &mut PointerLocation)>,
+    mut pointer_input_reader: EventReader<PointerInput>,
+) {
+    for event in pointer_input_reader.read() {
+        // Ignore the events we send to the render-targets
+        if !matches!(event.location.target, NormalizedRenderTarget::Window(..)) {
+            continue;
+        }
+        for (pane_root, _viewport) in &viewports {
+            let content_node_id = children_query
+                .iter_descendants(pane_root)
+                .find(|e| content.contains(*e))
+                .unwrap();
+
+            let image_id = children_query.get(content_node_id).unwrap()[0];
+
+            let Ok((computed_node, global_transform, ui_image)) = node_query.get(image_id) else {
+                // Inactive viewport
+                continue;
+            };
+            let node_rect =
+                Rect::from_center_size(global_transform.translation().xy(), computed_node.size());
+
+            let new_location = Location {
+                position: event.location.position - node_rect.min,
+                target: NormalizedRenderTarget::Image(ui_image.texture.clone()),
+            };
+
+            // Duplicate the event
+            let mut new_event = event.clone();
+            // Relocate the event to the render-target
+            new_event.location = new_location.clone();
+            // Resend the event
+            commands.send_event(new_event);
+
+            if let Some((_id, mut pointer_location)) = pointers
+                .iter_mut()
+                .find(|(pointer_id, _)| **pointer_id == event.pointer_id)
+            {
+                // Relocate the pointer to the render-target
+                pointer_location.location = Some(new_location);
+            }
+        }
     }
 }
 
@@ -116,6 +181,12 @@ fn on_pane_creation(
                 ..default()
             },
         ))
+        .observe(|trigger: Trigger<Pointer<Over>>, mut commands: Commands| {
+            commands.entity(trigger.entity()).insert(Active);
+        })
+        .observe(|trigger: Trigger<Pointer<Out>>, mut commands: Commands| {
+            commands.entity(trigger.entity()).remove::<Active>();
+        })
         .set_parent(content_node)
         .id();
 

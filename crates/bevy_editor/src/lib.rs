@@ -96,10 +96,14 @@ fn dummy_setup(
     mut materials_2d: ResMut<Assets<ColorMaterial>>,
     mut materials_3d: ResMut<Assets<StandardMaterial>>,
 ) {
-    commands.spawn((
-        Mesh2d(meshes.add(Circle::new(50.0))),
-        MeshMaterial2d(materials_2d.add(Color::WHITE)),
-    ));
+    commands
+        .spawn((
+            Mesh2d(meshes.add(Circle::new(50.0))),
+            MeshMaterial2d(materials_2d.add(Color::WHITE)),
+        ))
+        .observe(|_trigger: Trigger<Pointer<Click>>| {
+            println!("circle spawned!");
+        });
 
     commands
         .spawn((
