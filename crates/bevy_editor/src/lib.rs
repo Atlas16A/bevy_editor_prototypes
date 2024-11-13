@@ -12,10 +12,12 @@
 //! - Finally, it will be a standalone application that communicates with a running Bevy game via the Bevy Remote Protocol.
 
 use bevy::app::App as BevyApp;
+use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
 // Re-export Bevy for project use
 pub use bevy;
 
+use bevy::render::view::RenderLayers;
 use bevy_context_menu::ContextMenuPlugin;
 use bevy_editor_styles::StylesPlugin;
 
@@ -89,6 +91,9 @@ impl App {
     }
 }
 
+#[derive(Component)]
+struct NodeGraphNode;
+
 /// This is temporary, until we can load maps from the asset browser
 fn dummy_setup(
     mut commands: Commands,
@@ -121,4 +126,27 @@ fn dummy_setup(
         },
         Transform::default().looking_to(Vec3::NEG_ONE, Vec3::Y),
     ));
+
+    commands
+        .spawn((
+            Mesh2d(meshes.add(Rectangle::new(50.0, 50.0))),
+            MeshMaterial2d(materials_2d.add(ColorMaterial::from_color(RED))),
+            RenderLayers::layer(11),
+            NodeGraphNode,
+        ))
+        .observe(
+            |trigger: Trigger<Pointer<Drag>>,
+             mut query: Query<(Entity, &mut Transform, &NodeGraphNode)>| {
+                if query.contains(trigger.entity()) {
+                    let delta = Vec3::new(trigger.delta.x, -trigger.delta.y, 0.0);
+                    query.get_mut(trigger.entity()).unwrap().1.translation += delta;
+                    // Print the delta and the new position
+                    println!(
+                        "Delta: {:?}, New position: {:?}",
+                        trigger.delta,
+                        query.get_mut(trigger.entity()).unwrap().1.translation
+                    );
+                }
+            },
+        );
 }

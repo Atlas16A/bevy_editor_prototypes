@@ -64,8 +64,7 @@ impl Plugin for NodeGraphPlugin {
                         .entity(query.get(trigger.entity()).unwrap().camera)
                         .despawn_recursive();
                 },
-            )
-            .add_observer(node_click_observer);
+            );
 
         app.world_mut()
             .get_resource_or_init::<PaneRegistry>()
@@ -227,34 +226,6 @@ fn on_pane_creation(
         );
 
     query.get_mut(pane_root).unwrap().camera = camera_id;
-
-    create_node(commands, meshes, materials);
-}
-
-#[derive(Component)]
-struct NodeGraphNode;
-
-fn create_node(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
-    commands.spawn((
-        Mesh2d(meshes.add(Rectangle::new(50.0, 50.0))),
-        MeshMaterial2d(materials.add(ColorMaterial::from_color(RED))),
-        RenderLayers::layer(11),
-        NodeGraphNode,
-    ));
-}
-
-fn node_click_observer(
-    trigger: Trigger<Pointer<Drag>>,
-    mut query: Query<(Entity, &mut Transform, &NodeGraphNode)>,
-) {
-    if query.contains(trigger.entity()) {
-        query.get_mut(trigger.entity()).unwrap().1.translation.x += trigger.delta.x;
-        query.get_mut(trigger.entity()).unwrap().1.translation.y -= trigger.delta.y;
-    }
 }
 
 fn update_render_target_size(
