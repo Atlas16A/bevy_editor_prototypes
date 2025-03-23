@@ -12,7 +12,7 @@ use bevy::{
 use bevy_editor::project::{
     create_new_project, get_local_projects, set_project_list, templates::Templates, ProjectInfo,
 };
-use bevy_editor::EditorPlugin;
+
 use bevy_editor_styles::{StylesPlugin, Theme};
 use bevy_footer_bar::{FooterBarPlugin, FooterBarSet};
 use bevy_scroll_box::ScrollBoxPlugin;
@@ -102,6 +102,8 @@ fn main() {
         .run();
 }
 
+#[cfg(feature = "editor")]
+use bevy_editor::EditorPlugin;
 #[cfg(feature = "editor")]
 fn main() {
     App::new()
