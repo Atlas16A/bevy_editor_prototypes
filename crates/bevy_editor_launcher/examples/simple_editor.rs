@@ -1,6 +1,16 @@
 //! A simple example of how to launch the editor.
-use bevy_editor::App;
+use bevy::prelude::*;
+use bevy_editor::EditorPlugin;
 
+#[cfg(not(feature = "editor"))]
 fn main() {
-    App::new().run();
+    App::new().add_plugins(DefaultPlugins).run();
+}
+
+#[cfg(feature = "editor")]
+fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugins(EditorPlugin)
+        .run();
 }

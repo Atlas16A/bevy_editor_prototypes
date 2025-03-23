@@ -6,6 +6,7 @@ edition = "2021"
 [lints]
 workspace = true
 
+
 [dependencies]
 bevy.workspace = true
 bevy_editor.workspace = true
@@ -17,3 +18,11 @@ rfd.workspace = true
 futures-util.workspace = true
 serde.workspace = true
 ron.workspace = true
+
+[features]
+editor = []
+
+[[example]]
+name = "editor"
+path = "examples/simple_editor.rs"
+doc-scrape-examples = true

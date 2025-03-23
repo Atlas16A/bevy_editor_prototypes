@@ -12,6 +12,7 @@ use bevy::{
 use bevy_editor::project::{
     create_new_project, get_local_projects, set_project_list, templates::Templates, ProjectInfo,
 };
+use bevy_editor::EditorPlugin;
 use bevy_editor_styles::{StylesPlugin, Theme};
 use bevy_footer_bar::{FooterBarPlugin, FooterBarSet};
 use bevy_scroll_box::ScrollBoxPlugin;
@@ -76,6 +77,7 @@ fn spawn_create_new_project_task(commands: &mut Commands, template: Templates, p
 #[derive(Resource)]
 struct ProjectInfoList(Vec<ProjectInfo>);
 
+#[cfg(not(feature = "editor"))]
 fn main() {
     App::new()
         .add_plugins((
@@ -97,5 +99,13 @@ fn main() {
             poll_create_project_task.run_if(run_if_task_is_running),
         )
         .configure_sets(Startup, FooterBarSet.after(ui::setup))
+        .run();
+}
+
+#[cfg(feature = "editor")]
+fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugins(EditorPlugin)
         .run();
 }

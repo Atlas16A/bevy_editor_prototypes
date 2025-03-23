@@ -31,15 +31,6 @@ mod load_gltf;
 pub mod project;
 mod ui;
 
-/// The plugin that handle the bare minimum to run the application
-pub struct RuntimePlugin;
-
-impl Plugin for RuntimePlugin {
-    fn build(&self, bevy_app: &mut BevyApp) {
-        bevy_app.add_plugins(DefaultPlugins);
-    }
-}
-
 /// The plugin that attach your editor to the application
 pub struct EditorPlugin;
 
@@ -60,32 +51,6 @@ impl Plugin for EditorPlugin {
                 LoadGltfPlugin,
             ))
             .add_systems(Startup, dummy_setup);
-    }
-}
-
-/// Your game application
-/// This appllication allow your game to run, and the editor to be attached to it
-#[derive(Default)]
-pub struct App;
-
-impl App {
-    /// create new instance of [`App`]
-    pub fn new() -> Self {
-        Self
-    }
-
-    /// Run the application
-    pub fn run(&self) -> AppExit {
-        let args = std::env::args().collect::<Vec<String>>();
-        let editor_mode = !args.iter().any(|arg| arg == "-game");
-
-        let mut bevy_app = BevyApp::new();
-        bevy_app.add_plugins(RuntimePlugin);
-        if editor_mode {
-            bevy_app.add_plugins(EditorPlugin);
-        }
-
-        bevy_app.run()
     }
 }
 
